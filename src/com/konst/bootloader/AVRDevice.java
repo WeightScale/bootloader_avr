@@ -22,9 +22,9 @@ public class AVRDevice {
     final InputStream inputStreamFile;
     private int flashSize;                                                              // Size of Flash memory in bytes.
     private int eepromSize;                                                             // Size of EEPROM memory in bytes.
-    //private int signature0;
-    //private int signature1;
-    //private int signature2;                                                             // The three signature bytes, read from XML PartDescriptionFiles.
+    private int signature0;
+    private int signature1;
+    private int signature2;                                                             // The three signature bytes, read from XML PartDescriptionFiles.
     private int pageSize;                                                               // Flash page size.
 
     /* Constructor */
@@ -39,7 +39,7 @@ public class AVRDevice {
 
     /* Methods */
     private void readParametersFromAVRStudio() throws Exception {
-        //Utility Util = new Utility();
+        Utility Util = new Utility();
         XmlPullParser xpp = XmlPullParserFactory.newInstance().newPullParser();
 
         flashSize = Integer.parseInt(getValue(xpp, "PROG_FLASH"));
@@ -50,9 +50,9 @@ public class AVRDevice {
             pageSize <<= 1; // We want pagesize in bytes.
         }
 
-        //signature0 = Util.convertHex(new StringBuilder(getValue(xpp, "ADDR000")).deleteCharAt(0).toString());
-        //signature1 = Util.convertHex(new StringBuilder(getValue(xpp, "ADDR001")).deleteCharAt(0).toString());
-        //signature2 = Util.convertHex(new StringBuilder(getValue(xpp, "ADDR002")).deleteCharAt(0).toString());
+        signature0 = Util.convertHex(new StringBuilder(getValue(xpp, "ADDR000")).deleteCharAt(0).toString());
+        signature1 = Util.convertHex(new StringBuilder(getValue(xpp, "ADDR001")).deleteCharAt(0).toString());
+        signature2 = Util.convertHex(new StringBuilder(getValue(xpp, "ADDR002")).deleteCharAt(0).toString());
 
         handler.obtainMessage(HandlerBootloader.Result.MSG_LOG.ordinal(), "Saving cached XML parameters...").sendToTarget();
     }
@@ -97,6 +97,18 @@ public class AVRDevice {
 
     long getPageSize() {
         return pageSize;
+    }
+
+    public long getSignature0() {
+        return signature0;
+    }
+
+    public long getSignature1() {
+        return signature1;
+    }
+
+    public long getSignature2() {
+        return signature2;
     }
 
 }

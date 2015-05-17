@@ -58,7 +58,7 @@ public abstract class AVRProgrammer {
         return (byte) getByte();
     }
 
-    private boolean checkSignature(long sig0, long sig1, long sig2) throws Exception {
+    public boolean checkSignature(long sig0, long sig1, long sig2) throws Exception {
         Integer[] sig = new Integer[3];
 	    /* Get signature */
         readSignature(sig);
@@ -616,6 +616,10 @@ public abstract class AVRProgrammer {
         }
         sendByte((byte) 'E');   //Exit bootloader
         handler.obtainMessage(HandlerBootloader.Result.MSG_LOG.ordinal(), "Exit bootloader").sendToTarget();
+    }
+
+    public AVRDevice getAvrDevice(){
+        return avrDevice;
     }
 
 }
