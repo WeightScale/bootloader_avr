@@ -3,11 +3,7 @@ package com.konst.bootloader;
 import java.io.InputStream;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Kostya
- * Date: 23.12.13
- * Time: 16:56
- * To change this template use File | Settings | File Templates.
+ * Класс программатора микроконтролера
  */
 public abstract class AVRProgrammer {
     private final HandlerBootloader handler;                        // для сообщений
@@ -19,16 +15,24 @@ public abstract class AVRProgrammer {
     private int eepromEndAddress = -1;
 
 
-    /* Constructor */
-    public AVRProgrammer(/*Module module,*/ HandlerBootloader _handler) {
-        //this.module = module;
+    /**
+     * Конструктор программатора
+     * @param _handler Класс Handler для вывода сообщений*/
+    public AVRProgrammer(HandlerBootloader _handler) {
         handler = _handler;
     }
 
-    public abstract void sendByte(byte ch);     // посылаем байт на устройство
-    public abstract int getByte();              // принимаем байт с устройства
+    /** Абстрактный метод послать байт
+     * @param b байт
+     */
+    public abstract void sendByte(byte b);
 
-    /* Methods */
+    /** Абстрактный метод принять байт
+     * @return байт
+     */
+    public abstract int getByte();
+
+
     private void setPagesize(long _pagesize) {
         pagesize = _pagesize;
     }
@@ -58,6 +62,13 @@ public abstract class AVRProgrammer {
         return (byte) getByte();
     }
 
+    /** Проверяем сигнатуру микроконтролера
+     * @param sig0 Сигнатура 0.
+     * @param sig1 Сигнатура 1.
+     * @param sig2 Сигнатура 2.
+     * @return true - команда поддерживается.
+     * @throws Exception Сигнатура не совпадает.
+     */
     public boolean checkSignature(long sig0, long sig1, long sig2) throws Exception {
         Integer[] sig = new Integer[3];
 	    /* Get signature */
@@ -482,6 +493,8 @@ public abstract class AVRProgrammer {
         return true; // Indicate supported command.
     }
 
+    /** Получаем название bootloader микроконтролера
+     * @return Имя bootloader  */
     public String readProgrammerID() {
         /* Send 'S' command to programmer */
         sendByte((byte) 'S');
@@ -494,8 +507,9 @@ public abstract class AVRProgrammer {
         return String.valueOf(id);
     }
 
-    public boolean isProgrammerId() { //Является ли программатором
-        //String str = AVRProgrammer.readProgrammerID();
+    /** Является ли программатором "AVRBOOT"
+     * @return true - усли является. */
+    public boolean isProgrammerId() {
         return "AVRBOOT".equals(readProgrammerID());
     }
 
@@ -518,6 +532,9 @@ public abstract class AVRProgrammer {
         }
     }
 
+    /** Почает дескриптор из сигнатуры.
+     *  Использовать для определения имени фаила прошивки. (Указывать дескриптор в части имени файла.)
+     * @return дескриптор  */
     public int getDescriptor(){
         Integer[] sig = new Integer[3];
         /* Get signature */
@@ -526,6 +543,10 @@ public abstract class AVRProgrammer {
         return (sig[1] & 0xff) << 8 | sig[2] & 0xff;
     }
 
+    /** Подготавливаем файлы для прошивки микроконтролера.
+     * @param isDevice фаил микроконтроллера
+     * @param isHex фаил прошивки
+     * @throws Exception Подготовка не прошла есть ошибки.   */
     public void doJob(InputStream isDevice, InputStream isHex) throws Exception {
 
         avrDevice = new AVRDevice(isDevice /*dirDeviceFiles + '/' + deviceFileName, this*/, handler);
@@ -533,7 +554,9 @@ public abstract class AVRProgrammer {
         hexFile.readFile(isHex /*dirBootFiles + '/' + bootFileName*/);
     }
 
-    public void doDeviceDependent(/*AVRProgrammer programmer, AVRDevice avr, HEXFile hex*/) throws Exception {
+    /** Выполнить программирование.
+     * @throws Exception Программирование не выполнено, есть ошибки.   */
+    public void doDeviceDependent() throws Exception {
 
 	    /* Set programmer pagesize */
         pagesize = avrDevice.getPageSize();
@@ -618,6 +641,8 @@ public abstract class AVRProgrammer {
         handler.obtainMessage(HandlerBootloader.Result.MSG_LOG.ordinal(), "Exit bootloader").sendToTarget();
     }
 
+    /** Полусить класс микроконтролера
+     * @return Класс микроконтроллера.     */
     public AVRDevice getAvrDevice(){
         return avrDevice;
     }

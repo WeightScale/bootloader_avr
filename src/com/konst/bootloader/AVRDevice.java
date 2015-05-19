@@ -17,7 +17,7 @@ import java.io.InputStream;
  * Time: 11:28
  * To change this template use File | Settings | File Templates.
  */
-public class AVRDevice {
+class AVRDevice {
     private final HandlerBootloader handler;
     final InputStream inputStreamFile;
     private int flashSize;                                                              // Size of Flash memory in bytes.

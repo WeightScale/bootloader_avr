@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
  * Time: 18:10
  * To change this template use File | Settings | File Templates.
  */
-public class HEXFile {
+class HEXFile {
     private final HandlerBootloader handler;
     private final byte[] data;                                              // Holds the data bytes.
     private int start;
