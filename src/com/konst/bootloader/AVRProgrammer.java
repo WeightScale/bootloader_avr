@@ -32,7 +32,6 @@ public abstract class AVRProgrammer {
      */
     public abstract int getByte();
 
-
     private void setPagesize(long _pagesize) {
         pagesize = _pagesize;
     }
@@ -60,24 +59,6 @@ public abstract class AVRProgrammer {
 	    /* Send command 't' */
         sendByte((byte) 't');
         return (byte) getByte();
-    }
-
-    /** Проверяем сигнатуру микроконтролера
-     * @param sig0 Сигнатура 0.
-     * @param sig1 Сигнатура 1.
-     * @param sig2 Сигнатура 2.
-     * @return true - команда поддерживается.
-     * @throws Exception Сигнатура не совпадает.
-     */
-    public boolean checkSignature(long sig0, long sig1, long sig2) throws Exception {
-        Integer[] sig = new Integer[3];
-	    /* Get signature */
-        readSignature(sig);
-	    /* Compare signature */
-        if (sig[0] != sig0 || sig[1] != sig1 || sig[2] != sig2) {
-            throw new Exception("Signature does not match selected device! ");
-        }
-        return true; // Indicate supported command.
     }
 
     private void writeFlashPage() throws Exception {
@@ -493,6 +474,25 @@ public abstract class AVRProgrammer {
         return true; // Indicate supported command.
     }
 
+    private void setAddress(long address) throws Exception {
+	    /* Set current address */
+        if (address < 0x10000) {
+            sendByte((byte) 'A');
+            sendByte((byte) (address >> 8));
+            sendByte((byte) address);
+        } else {
+            sendByte((byte) 'H');
+            sendByte((byte) (address >> 16));
+            sendByte((byte) (address >> 8));
+            sendByte((byte) address);
+        }
+
+	    /* Should return CR */
+        if (getByte() != '\r') {
+            throw new Exception("Setting address for programming operations failed! " + "Programmer did not return CR after 'A'-command.");
+        }
+    }
+
     /** Получаем название bootloader микроконтролера
      * @return Имя bootloader  */
     public String readProgrammerID() {
@@ -511,25 +511,6 @@ public abstract class AVRProgrammer {
      * @return true - усли является. */
     public boolean isProgrammerId() {
         return "AVRBOOT".equals(readProgrammerID());
-    }
-
-    private void setAddress(long address) throws Exception {
-	    /* Set current address */
-        if (address < 0x10000) {
-            sendByte((byte) 'A');
-            sendByte((byte) (address >> 8));
-            sendByte((byte) address);
-        } else {
-            sendByte((byte) 'H');
-            sendByte((byte) (address >> 16));
-            sendByte((byte) (address >> 8));
-            sendByte((byte) address);
-        }
-
-	    /* Should return CR */
-        if (getByte() != '\r') {
-            throw new Exception("Setting address for programming operations failed! " + "Programmer did not return CR after 'A'-command.");
-        }
     }
 
     /** Почает дескриптор из сигнатуры.
@@ -641,10 +622,29 @@ public abstract class AVRProgrammer {
         handler.obtainMessage(HandlerBootloader.Result.MSG_LOG.ordinal(), "Exit bootloader").sendToTarget();
     }
 
-    /** Полусить класс микроконтролера
+    /** Получить класс микроконтролера
      * @return Класс микроконтроллера.     */
     public AVRDevice getAvrDevice(){
         return avrDevice;
     }
+
+    /** Проверяем сигнатуру микроконтролера
+     * @param sig0 Сигнатура 0.
+     * @param sig1 Сигнатура 1.
+     * @param sig2 Сигнатура 2.
+     * @return true - команда поддерживается.
+     * @throws Exception Сигнатура не совпадает.
+     */
+    public boolean checkSignature(long sig0, long sig1, long sig2) throws Exception {
+        Integer[] sig = new Integer[3];
+	    /* Get signature */
+        readSignature(sig);
+	    /* Compare signature */
+        if (sig[0] != sig0 || sig[1] != sig1 || sig[2] != sig2) {
+            throw new Exception("Signature does not match selected device! ");
+        }
+        return true; // Indicate supported command.
+    }
+
 
 }

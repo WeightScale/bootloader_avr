@@ -28,7 +28,7 @@ class AVRDevice {
     private int pageSize;                                                               // Flash page size.
 
     /* Constructor */
-    public AVRDevice(InputStream inputStreamFile, HandlerBootloader _handler) throws Exception {
+    AVRDevice(InputStream inputStreamFile, HandlerBootloader _handler) throws Exception {
         handler = _handler;
         this.inputStreamFile = inputStreamFile;
         flashSize = eepromSize = 0;
@@ -87,27 +87,27 @@ class AVRDevice {
         return false;
     }
 
-    int getFlashSize() {
+    protected int getFlashSize() {
         return flashSize;
     }
 
-    int getEEPROMSize() {
+    protected int getEEPROMSize() {
         return eepromSize;
     }
 
-    long getPageSize() {
+    protected long getPageSize() {
         return pageSize;
     }
 
-    public long getSignature0() {
+    private long getSignature0() {
         return signature0;
     }
 
-    public long getSignature1() {
+    private long getSignature1() {
         return signature1;
     }
 
-    public long getSignature2() {
+    private long getSignature2() {
         return signature2;
     }
 
