@@ -17,7 +17,7 @@ import java.io.InputStream;
  * Time: 11:28
  * To change this template use File | Settings | File Templates.
  */
-class AVRDevice {
+public class AVRDevice {
     private final HandlerBootloader handler;
     final InputStream inputStreamFile;
     private int flashSize;                                                              // Size of Flash memory in bytes.
@@ -25,7 +25,7 @@ class AVRDevice {
     private int signature0;
     private int signature1;
     private int signature2;                                                             // The three signature bytes, read from XML PartDescriptionFiles.
-    private int pageSize;                                                               // Flash page size.
+    public int pageSize;                                                               // Flash page size.
 
     /* Constructor */
     AVRDevice(InputStream inputStreamFile, HandlerBootloader _handler) throws Exception {
@@ -99,15 +99,15 @@ class AVRDevice {
         return pageSize;
     }
 
-    private long getSignature0() {
+    public long getSignature0() {
         return signature0;
     }
 
-    private long getSignature1() {
+    public long getSignature1() {
         return signature1;
     }
 
-    private long getSignature2() {
+    public long getSignature2() {
         return signature2;
     }
 

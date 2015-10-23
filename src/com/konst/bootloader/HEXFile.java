@@ -33,12 +33,12 @@ class HEXFile {
     private void parseRecord(final String hexLine, HEXRecord record) throws Exception {
         Utility Util = new Utility();
 
-        if (hexLine.length() < 11){                                             // At least 11 characters.
+        if (hexLine.length() < 11) {                                             // At least 11 characters.
             throw new Exception("Wrong HEX file format, missing fields! " + "Line from file was: (" + hexLine + ").");
         }
 
 	    /* Check format for line */
-        if (hexLine.charAt(0) != ':'){// Always start with colon.
+        if (hexLine.charAt(0) != ':') {// Always start with colon.
             throw new Exception("Wrong HEX file format, does not start with colon! " + "Line from file was: (" + hexLine + ").");
         }
 

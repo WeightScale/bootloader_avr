@@ -16,18 +16,21 @@ public abstract class AVRProgrammer {
 
 
     /**
-     * Конструктор программатора
-     * @param _handler Класс Handler для вывода сообщений*/
+     * Конструктор программатора.
+     * @param _handler Класс Handler для вывода сообщений
+     */
     public AVRProgrammer(HandlerBootloader _handler) {
         handler = _handler;
     }
 
-    /** Абстрактный метод послать байт
+    /**
+     * Абстрактный метод послать байт.
      * @param b байт
      */
     public abstract void sendByte(byte b);
 
-    /** Абстрактный метод принять байт
+    /**
+     * Абстрактный метод принять байт.
      * @return байт
      */
     public abstract int getByte();
@@ -49,7 +52,7 @@ public abstract class AVRProgrammer {
     private void readSignature(Integer... sig) {
         /* Send command 's' */
         sendByte((byte) 's');
-	    /* Get actual signature */
+        /* Get actual signature */
         sig[2] = getByte();
         sig[1] = getByte();
         sig[0] = getByte();
@@ -493,8 +496,11 @@ public abstract class AVRProgrammer {
         }
     }
 
-    /** Получаем название bootloader микроконтролера
-     * @return Имя bootloader  */
+    /**
+     * Получаем название bootloader микроконтролера
+     *
+     * @return Имя bootloader
+     */
     public String readProgrammerID() {
         /* Send 'S' command to programmer */
         sendByte((byte) 'S');
@@ -507,16 +513,22 @@ public abstract class AVRProgrammer {
         return String.valueOf(id);
     }
 
-    /** Является ли программатором "AVRBOOT"
-     * @return true - усли является. */
+    /**
+     * Является ли программатором "AVRBOOT"
+     *
+     * @return true - усли является.
+     */
     public boolean isProgrammerId() {
         return "AVRBOOT".equals(readProgrammerID());
     }
 
-    /** Почает дескриптор из сигнатуры.
-     *  Использовать для определения имени фаила прошивки. (Указывать дескриптор в части имени файла.)
-     * @return дескриптор  */
-    public int getDescriptor(){
+    /**
+     * Почает дескриптор из сигнатуры.
+     * Использовать для определения имени фаила прошивки. (Указывать дескриптор в части имени файла.)
+     *
+     * @return дескриптор
+     */
+    public int getDescriptor() {
         Integer[] sig = new Integer[3];
         /* Get signature */
         readSignature(sig);
@@ -524,10 +536,13 @@ public abstract class AVRProgrammer {
         return (sig[1] & 0xff) << 8 | sig[2] & 0xff;
     }
 
-    /** Подготавливаем файлы для прошивки микроконтролера.
+    /**
+     * Подготавливаем файлы для прошивки микроконтролера.
+     *
      * @param isDevice фаил микроконтроллера
-     * @param isHex фаил прошивки
-     * @throws Exception Подготовка не прошла есть ошибки.   */
+     * @param isHex    фаил прошивки
+     * @throws Exception Подготовка не прошла есть ошибки.
+     */
     public void doJob(InputStream isDevice, InputStream isHex) throws Exception {
 
         avrDevice = new AVRDevice(isDevice /*dirDeviceFiles + '/' + deviceFileName, this*/, handler);
@@ -535,8 +550,11 @@ public abstract class AVRProgrammer {
         hexFile.readFile(isHex /*dirBootFiles + '/' + bootFileName*/);
     }
 
-    /** Выполнить программирование.
-     * @throws Exception Программирование не выполнено, есть ошибки.   */
+    /**
+     * Выполнить программирование.
+     *
+     * @throws Exception Программирование не выполнено, есть ошибки.
+     */
     public void doDeviceDependent() throws Exception {
 
 	    /* Set programmer pagesize */
@@ -622,13 +640,18 @@ public abstract class AVRProgrammer {
         handler.obtainMessage(HandlerBootloader.Result.MSG_LOG.ordinal(), "Exit bootloader").sendToTarget();
     }
 
-    /** Получить класс микроконтролера
-     * @return Класс микроконтроллера.     */
-    public AVRDevice getAvrDevice(){
+    /**
+     * Получить класс микроконтролера
+     *
+     * @return Класс микроконтроллера.
+     */
+    public AVRDevice getAvrDevice() {
         return avrDevice;
     }
 
-    /** Проверяем сигнатуру микроконтролера
+    /**
+     * Проверяем сигнатуру микроконтролера
+     *
      * @param sig0 Сигнатура 0.
      * @param sig1 Сигнатура 1.
      * @param sig2 Сигнатура 2.
